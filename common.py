@@ -58,3 +58,34 @@ from sklearn.metrics import ConfusionMatrixDisplay
 ConfusionMatrixDisplay.from_predictions(y_test, y_pred)
 plt.show()
 
+'''datasets:
+kaggle
+uci machine learning repo
+google dataset search
+
+-----
+data.gov.in
+world bank open data
+WHO
+
+----
+
+hugging face
+openML
+-----
+
+papers
+
+csv converters online
+'''
+
+
+
+
+
+
+
+
+
+
+
