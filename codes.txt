@@ -119,6 +119,7 @@ if not is_classification:
 
 https://github.com/RakshithaYathiraj/MachineLearningLab
 https://github.com/Sana-pathan123/1BM24CS421_ML
+https://github.com/chaithanyasudhan/ML
 
 # =========================
 # 7. K-Means Clustering
