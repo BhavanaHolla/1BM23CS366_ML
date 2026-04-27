@@ -1,0 +1,137 @@
+# =========================
+# 1. Import Libraries
+# =========================
+import pandas as pd
+import numpy as np
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+
+# Models
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+
+# Metrics
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+
+# =========================
+# 2. Load CSV File
+# =========================
+from google.colab import files
+uploaded = files.upload()
+
+file_name = list(uploaded.keys())[0]
+df = pd.read_csv(file_name)
+
+print("\nDataset Preview:\n", df.head())
+
+
+# =========================
+# 3. Basic Preprocessing
+# =========================
+
+# Drop missing values (simple approach)
+df = df.dropna()
+
+# Encode categorical columns
+label_encoders = {}
+for col in df.select_dtypes(include=['object']).columns:
+    le = LabelEncoder()
+    df[col] = le.fit_transform(df[col])
+    label_encoders[col] = le
+
+# Split features & target (last column assumed target)
+X = df.iloc[:, :-1]
+y = df.iloc[:, -1]
+
+# Detect if classification or regression
+is_classification = (y.nunique() < 20)
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Feature scaling (only for numeric features)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+
+# =========================
+# 4. Evaluation Function
+# =========================
+def evaluate_model(name, model, X_test, y_test):
+    y_pred = model.predict(X_test)
+
+    print(f"\n{name} Results:")
+
+    try:
+        print("Accuracy :", accuracy_score(y_test, y_pred))
+        print("Precision:", precision_score(y_test, y_pred, average='weighted', zero_division=0))
+        print("Recall   :", recall_score(y_test, y_pred, average='weighted', zero_division=0))
+        print("F1 Score :", f1_score(y_test, y_pred, average='weighted', zero_division=0))
+    except:
+        print("Metrics not applicable for this model.")
+
+
+# =========================
+# 5. Classification Models
+# =========================
+if is_classification:
+    print("\n--- Classification Models ---")
+
+    models = {
+        "Decision Tree (ID3-like)": DecisionTreeClassifier(criterion='entropy'),
+        "Logistic Regression": LogisticRegression(max_iter=1000),
+        "KNN": KNeighborsClassifier(n_neighbors=5),
+        "SVM": SVC(),
+        "Random Forest": RandomForestClassifier(),
+        "Boosting (AdaBoost)": AdaBoostClassifier()
+    }
+
+    for name, model in models.items():
+        model.fit(X_train, y_train)
+        evaluate_model(name, model, X_test, y_test)
+
+
+# =========================
+# 6. Regression Model
+# =========================
+if not is_classification:
+    print("\n--- Regression (Linear) ---")
+
+    lin_reg = LinearRegression()
+    lin_reg.fit(X_train, y_train)
+    y_pred = lin_reg.predict(X_test)
+
+    print("Sample Predictions:\n", y_pred[:5])
+
+
+# =========================
+# 7. K-Means Clustering
+# =========================
+print("\n--- K-Means Clustering ---")
+
+kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+kmeans.fit(X)
+
+print("Cluster Labels:\n", kmeans.labels_[:10])
+
+
+# =========================
+# 8. PCA (Dimensionality Reduction)
+# =========================
+print("\n--- PCA ---")
+
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X)
+
+print("Reduced Shape:", X_pca.shape)
+print("Explained Variance:", pca.explained_variance_ratio_)
