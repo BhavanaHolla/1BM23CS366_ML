@@ -52,6 +52,9 @@ print("Accuracy:", accuracy_score(y_test, y_pred))
 print(confusion_matrix(y_test, y_pred))
 print(classification_report(y_test, y_pred))
 
+
+#df = pd.read_csv("bank-additional.csv",sep=";")
+
 #support- no of samples
 #Macro Avg-Treats both classes equally
 #Weighted Avg-Gives more importance to majority class (≤50K)
